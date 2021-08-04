@@ -6,11 +6,49 @@ import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import { gnosisSafe, injected } from '../connectors'
 import { NetworkContextName } from '../constants/misc'
+import { MetaMaskWalletProvider, NetworkNames, Sdk } from 'etherspot'
+// import { providers } from 'ethers'
 
-export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
+let sdk: Sdk
+let walletProvider: MetaMaskWalletProvider
+let active1 = false
+
+export function useActiveWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
   return context.active ? context : contextNetwork
+  // return walletProvider
+}
+
+export function getwalletProvider(): MetaMaskWalletProvider {
+  // const [active1, setActive] = useState(false)
+  console.log('active: ', active1, MetaMaskWalletProvider.detect())
+  if (!active1) {
+    MetaMaskWalletProvider.connect()
+      .then(async (provider) => {
+        walletProvider = provider
+        console.log(provider)
+        active1 = true
+        sdk = new Sdk(walletProvider, {
+          networkName: 'ropsten' as NetworkNames,
+          omitWalletProviderNetworkCheck: true,
+        })
+        await sdk.computeContractAccount()
+        console.log(await sdk.getAccountBalances())
+        return walletProvider
+      })
+      .catch((err) => {
+        console.log(err)
+        return null
+      })
+  } else {
+    return walletProvider
+  }
+  return walletProvider
+}
+
+export function getSdk() {
+  return sdk
 }
 
 export function useEagerConnect() {

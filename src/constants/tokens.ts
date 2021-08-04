@@ -113,6 +113,7 @@ export const UNI: { [chainId: number]: Token } = {
   [SupportedChainId.ROPSTEN]: new Token(SupportedChainId.ROPSTEN, UNI_ADDRESS[3], 18, 'UNI', 'Uniswap'),
   [SupportedChainId.GOERLI]: new Token(SupportedChainId.GOERLI, UNI_ADDRESS[5], 18, 'UNI', 'Uniswap'),
   [SupportedChainId.KOVAN]: new Token(SupportedChainId.KOVAN, UNI_ADDRESS[42], 18, 'UNI', 'Uniswap'),
+  [SupportedChainId.SOKOL]: new Token(SupportedChainId.SOKOL, UNI_ADDRESS[77], 18, 'UNI', 'Uniswap'),
 }
 
 export const WETH9_EXTENDED: { [chainId: number]: Token } = {
@@ -140,6 +141,13 @@ export const WETH9_EXTENDED: { [chainId: number]: Token } = {
   ),
   [SupportedChainId.ARBITRUM_RINKEBY]: new Token(
     SupportedChainId.ARBITRUM_RINKEBY,
+    '0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681',
+    18,
+    'WETH',
+    'Wrapped Ether'
+  ),
+  [SupportedChainId.SOKOL]: new Token(
+    SupportedChainId.SOKOL,
     '0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681',
     18,
     'WETH',

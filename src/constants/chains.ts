@@ -7,6 +7,7 @@ export enum SupportedChainId {
   RINKEBY = 4,
   GOERLI = 5,
   KOVAN = 42,
+  SOKOL = 77,
 
   ARBITRUM_ONE = 42161,
   ARBITRUM_RINKEBY = 421611,
@@ -20,6 +21,7 @@ export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
   SupportedChainId.RINKEBY,
   SupportedChainId.GOERLI,
   SupportedChainId.KOVAN,
+  SupportedChainId.SOKOL,
 
   SupportedChainId.ARBITRUM_ONE,
   SupportedChainId.ARBITRUM_RINKEBY,
@@ -33,6 +35,7 @@ export const L1_CHAIN_IDS = [
   SupportedChainId.RINKEBY,
   SupportedChainId.GOERLI,
   SupportedChainId.KOVAN,
+  SupportedChainId.SOKOL,
 ] as const
 
 export type SupportedL1ChainId = typeof L1_CHAIN_IDS[number]
@@ -124,5 +127,11 @@ export const CHAIN_INFO: ChainInfo = {
     infoLink: 'https://info.uniswap.org/#/optimism',
     label: 'Optimistic Kovan',
     logoUrl: optimismLogoUrl,
+  },
+  [SupportedChainId.SOKOL]: {
+    docs: 'https://docs.uniswap.org/',
+    explorer: 'https://blockscout.com/poa/sokol/',
+    infoLink: 'https://info.uniswap.org/#/',
+    label: 'Sokol',
   },
 }

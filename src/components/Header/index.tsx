@@ -11,8 +11,8 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useDarkModeManager } from 'state/user/hooks'
 import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
-import Logo from '../../assets/svg/logo.svg'
-import LogoDark from '../../assets/svg/logo_white.svg'
+import Logo from '../../assets/svg/Full Green+Black.svg'
+import LogoDark from '../../assets/svg/Full White.svg'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { ExternalLink, TYPE } from '../../theme'
 import ClaimModal from '../claim/ClaimModal'
@@ -265,7 +265,7 @@ export default function Header() {
       </Modal>
       <Title href=".">
         <UniIcon>
-          <img width={'24px'} src={darkMode ? LogoDark : Logo} alt="logo" />
+          <img width={'200px'} src={darkMode ? LogoDark : Logo} alt="logo" />
         </UniIcon>
       </Title>
       <HeaderLinks>
@@ -290,10 +290,10 @@ export default function Header() {
             <Trans>Vote</Trans>
           </StyledNavLink>
         )}
-        <StyledExternalLink id={`stake-nav-link`} href={infoLink}>
+        {/* <StyledExternalLink id={`stake-nav-link`} href={infoLink}>
           <Trans>Charts</Trans>
           <sup>↗</sup>
-        </StyledExternalLink>
+        </StyledExternalLink> */}
       </HeaderLinks>
 
       <HeaderControls>

@@ -1,6 +1,6 @@
 {
   "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "description": "Pillar Interface",
   "homepage": ".",
   "private": true,
   "devDependencies": {
@@ -159,5 +159,8 @@
     ]
   },
   "license": "GPL-3.0-or-later",
-  "dependencies": {}
+  "dependencies": {
+    "etherspot": "^1.15.0",
+    "reflect-metadata": "^0.1.13"
+  }
 }
