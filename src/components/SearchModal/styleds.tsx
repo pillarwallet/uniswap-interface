@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { AutoColumn } from '../Column'
-import { RowBetween } from '../Row'
+import { RowFixed, RowBetween } from '../Row'
 
 export const TextDot = styled.div`
   height: 3px;
@@ -13,6 +13,11 @@ export const Checkbox = styled.input`
   border: 1px solid ${({ theme }) => theme.red3};
   height: 20px;
   margin: 0;
+`
+
+export const FadedSpan = styled(RowFixed)`
+  color: ${({ theme }) => theme.primary1};
+  font-size: 14px;
 `
 
 export const PaddedColumn = styled(AutoColumn)`

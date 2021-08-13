@@ -1,5 +1,7 @@
 import arbitrumLogoUrl from 'assets/svg/arbitrum_logo.svg'
 import optimismLogoUrl from 'assets/svg/optimism_logo.svg'
+// import { env } from 'process'
+// import { Currency } from '@zeroexchange/sdk'
 
 export enum SupportedChainId {
   MAINNET = 1,
@@ -13,6 +15,149 @@ export enum SupportedChainId {
   ARBITRUM_RINKEBY = 421611,
   OPTIMISM = 10,
   OPTIMISTIC_KOVAN = 69,
+}
+
+export const SupportedCrossChains = {
+  chains: [
+    {
+      chainId: 1,
+      networkId: 1,
+      name: 'Ethereum',
+      // bridgeAddress: '0xC113367F7b35E695C8570d768E7F67b48b2E135D',
+      // erc20HandlerAddress: '0x083D9DacEb094e2b6C018AEbF58BB7c4D01E17db',
+      // rpcUrl: 'https://rinkeby.infura.io/v3/45174a29359d4b07ade01676259bc47a',
+      type: 'Ethereum',
+      // blockExplorer: 'https://ropsten.etherscan.io',
+      nativeTokenSymbol: 'ETH',
+      symbol: 'ETH',
+      isNative: true,
+      tokens: [
+        {
+          address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+          name: 'WETH',
+          symbol: 'WETH',
+          assetBase: 'ETH',
+          decimals: 18,
+          // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+        },
+        {
+          address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+          name: 'WETH',
+          symbol: 'WETH',
+          assetBase: 'ETH',
+          decimals: 18,
+          // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+        },
+        {
+          address: '0xc66227E44bf1E6F043919A65707b826e3E9f1132',
+          name: 'USDT',
+          symbol: 'USDT',
+          assetBase: 'USDT',
+          decimals: 6,
+          // resourceId: '0x0000000000000000000000c66227E44bf1E6F043919A65707b826e3E9f113201',
+        },
+        {
+          address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+          name: 'USDC',
+          symbol: 'USDC',
+          assetBase: 'USDC',
+          decimals: 6,
+          resourceId: '0x0000000000000000000000eb8f08a975ab53e34d8a0330e0d34de942c9592601',
+        },
+      ],
+    },
+    // {
+    //   chainId: 3,
+    //   networkId: 3,
+    //   name: 'Ropsten',
+    //   // bridgeAddress: '0xC113367F7b35E695C8570d768E7F67b48b2E135D',
+    //   // erc20HandlerAddress: '0x083D9DacEb094e2b6C018AEbF58BB7c4D01E17db',
+    //   // rpcUrl: 'https://rinkeby.infura.io/v3/45174a29359d4b07ade01676259bc47a',
+    //   type: 'Ethereum',
+    //   // blockExplorer: 'https://ropsten.etherscan.io',
+    //   nativeTokenSymbol: 'tETH',
+    //   tokens: [
+    //     {
+    //       address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+    //       name: 'WETH',
+    //       symbol: 'WETH',
+    //       assetBase: 'ETH',
+    //       decimals: 18,
+    //       // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+    //     },
+    //     {
+    //       address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+    //       name: 'WETH',
+    //       symbol: 'WETH',
+    //       assetBase: 'ETH',
+    //       decimals: 18,
+    //       // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+    //     },
+    //     {
+    //       address: '0xc66227E44bf1E6F043919A65707b826e3E9f1132',
+    //       name: 'USDT',
+    //       symbol: 'USDT',
+    //       assetBase: 'USDT',
+    //       decimals: 6,
+    //       // resourceId: '0x0000000000000000000000c66227E44bf1E6F043919A65707b826e3E9f113201',
+    //     },
+    //     {
+    //       address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+    //       name: 'USDC',
+    //       symbol: 'USDC',
+    //       assetBase: 'USDC',
+    //       decimals: 6,
+    //       resourceId: '0x0000000000000000000000eb8f08a975ab53e34d8a0330e0d34de942c9592601',
+    //     },
+    //   ],
+    // },
+    {
+      chainId: 77,
+      networkId: 77,
+      name: 'Sokol',
+      // bridgeAddress: '0xC113367F7b35E695C8570d768E7F67b48b2E135D',
+      // erc20HandlerAddress: '0x083D9DacEb094e2b6C018AEbF58BB7c4D01E17db',
+      // rpcUrl: 'https://rinkeby.infura.io/v3/45174a29359d4b07ade01676259bc47a',
+      type: 'xDai',
+      // blockExplorer: '',
+      nativeTokenSymbol: 'xDai',
+      symbol: 'xDai',
+      tokens: [
+        {
+          address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+          name: 'WETH',
+          symbol: 'WETH',
+          assetBase: 'ETH',
+          decimals: 18,
+          // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+        },
+        {
+          address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
+          name: 'WETH',
+          symbol: 'WETH',
+          assetBase: 'ETH',
+          decimals: 18,
+          // resourceId: '0x0000000000000000000000c778417e063141139fce010982780140aa0cd5ab01',
+        },
+        {
+          address: '0xc66227E44bf1E6F043919A65707b826e3E9f1132',
+          name: 'USDT',
+          symbol: 'USDT',
+          assetBase: 'USDT',
+          decimals: 6,
+          // resourceId: '0x0000000000000000000000c66227E44bf1E6F043919A65707b826e3E9f113201',
+        },
+        {
+          address: '0xeb8f08a975Ab53E34D8a0330E0D34de942C95926',
+          name: 'USDC',
+          symbol: 'USDC',
+          assetBase: 'USDC',
+          decimals: 6,
+          resourceId: '0x0000000000000000000000eb8f08a975ab53e34d8a0330e0d34de942c9592601',
+        },
+      ],
+    },
+  ],
 }
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [

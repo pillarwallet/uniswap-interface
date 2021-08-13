@@ -4,37 +4,35 @@ import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { Web3ReactContextInterface } from '@web3-react/core/dist/types'
 import { useEffect, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { gnosisSafe, injected } from '../connectors'
+import { gnosisSafe, injected, walletconnect } from '../connectors'
 import { NetworkContextName } from '../constants/misc'
-import { MetaMaskWalletProvider, NetworkNames, Sdk } from 'etherspot'
-// import { providers } from 'ethers'
+import { Env, EnvNames, MetaMaskWalletProvider, NetworkNames, Sdk, WalletConnectWalletProvider } from 'etherspot'
 
-let sdk: Sdk
-let walletProvider: MetaMaskWalletProvider
-let active1 = false
+Env.defaultName = EnvNames.TestNets
+let sdk: Sdk | undefined
+let walletProvider: any
 
-export function useActiveWeb3React() {
+export function useActiveWeb3React(): Web3ReactContextInterface<Web3Provider> {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
   return context.active ? context : contextNetwork
-  // return walletProvider
 }
 
-export function getwalletProvider(): MetaMaskWalletProvider {
+export async function Activate1(option: string) {
   // const [active1, setActive] = useState(false)
-  console.log('active: ', active1, MetaMaskWalletProvider.detect())
-  if (!active1) {
+  //console.log('active: ', active1, MetaMaskWalletProvider.detect())
+  // console.log(option)
+  // const { connector, active } = useActiveWeb3React()
+  // if (!active1) {
+  if (option == 'MetaMask') {
+    // console.log(injected)
     MetaMaskWalletProvider.connect()
       .then(async (provider) => {
         walletProvider = provider
-        console.log(provider)
-        active1 = true
-        sdk = new Sdk(walletProvider, {
-          networkName: 'ropsten' as NetworkNames,
-          omitWalletProviderNetworkCheck: true,
-        })
+        // console.log(provider)
+        sdk = new Sdk(walletProvider)
         await sdk.computeContractAccount()
-        console.log(await sdk.getAccountBalances())
+        // console.log(await sdk.getAccountBalances())
         return walletProvider
       })
       .catch((err) => {
@@ -42,13 +40,27 @@ export function getwalletProvider(): MetaMaskWalletProvider {
         return null
       })
   } else {
+    walletProvider = WalletConnectWalletProvider.connect(walletconnect.walletConnectProvider.connector)
+    sdk = new Sdk(walletProvider)
+    await sdk.computeContractAccount()
+    // console.log(sdk.state.accountAddress)
     return walletProvider
   }
   return walletProvider
 }
 
+export function GetwalletProvider(): any {
+  return walletProvider
+}
+
 export function getSdk() {
   return sdk
+}
+
+export function destorySdk() {
+  sdk?.destroy()
+  sdk = undefined
+  walletProvider = undefined
 }
 
 export function useEagerConnect() {
@@ -61,6 +73,8 @@ export function useEagerConnect() {
     if (triedToConnectToSafe && !active) {
       injected.isAuthorized().then((isAuthorized) => {
         if (isAuthorized) {
+          // console.log('here')
+          // console.log('Activating', Activate1(''))
           activate(injected, undefined, true).catch(() => {
             setTried(true)
           })
@@ -99,6 +113,9 @@ export function useInactiveListener(suppress = false) {
 
     if (ethereum && ethereum.on && !active && !error && !suppress) {
       const handleChainChanged = () => {
+        Activate1('MetaMask').then((value) => {
+          console.log(value)
+        })
         // eat errors
         activate(injected, undefined, true).catch((error) => {
           console.error('Failed to activate after chain changed', error)
@@ -107,6 +124,9 @@ export function useInactiveListener(suppress = false) {
 
       const handleAccountsChanged = (accounts: string[]) => {
         if (accounts.length > 0) {
+          Activate1('MetaMask').then((value) => {
+            console.log(value)
+          })
           // eat errors
           activate(injected, undefined, true).catch((error) => {
             console.error('Failed to activate after accounts changed', error)

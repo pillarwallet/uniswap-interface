@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components/macro'
 import { escapeRegExp } from '../../utils'
 
-const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string }>`
+const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string; transferPage?: boolean }>`
   color: ${({ error, theme }) => (error ? theme.red1 : theme.text1)};
   width: 0;
   position: relative;
@@ -11,6 +11,7 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
   border: none;
   flex: 1 1 auto;
   background-color: ${({ theme }) => theme.bg1};
+  background: ${({ transferPage }) => (transferPage ? '#171C47' : 'transparent')};
   font-size: ${({ fontSize }) => fontSize ?? '24px'};
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
@@ -53,6 +54,7 @@ export const Input = React.memo(function InnerInput({
   fontSize?: string
   align?: 'right' | 'left'
   prependSymbol?: string | undefined
+  transferPage?: boolean
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {

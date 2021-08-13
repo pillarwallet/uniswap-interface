@@ -18,6 +18,7 @@ import { isTransactionRecent, useAllTransactions } from '../../state/transaction
 import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonSecondary } from '../Button'
+import { getSdk } from '../../hooks/web3'
 
 import Identicon from '../Identicon'
 import Loader from '../Loader'
@@ -165,7 +166,11 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
 }
 
 function Web3StatusInner() {
-  const { account, connector, error } = useWeb3React()
+  const { connector, error } = useWeb3React()
+
+  const sdk = getSdk()
+
+  const account = sdk?.state.accountAddress
 
   const { ENSName } = useENSName(account ?? undefined)
 

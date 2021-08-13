@@ -5,6 +5,7 @@ import { t, Trans } from '@lingui/macro'
 import { FixedSizeList } from 'react-window'
 import { Text } from 'rebass'
 import { ExtendedEther } from '../../constants/tokens'
+import { SupportedCrossChains } from 'constants/chains'
 import { useActiveWeb3React } from '../../hooks/web3'
 import { useAllTokens, useToken, useIsUserAddedToken, useSearchInactiveTokenLists } from '../../hooks/Tokens'
 import { CloseIcon, TYPE, ButtonText, IconWrapper } from '../../theme'
@@ -44,15 +45,16 @@ const Footer = styled.div`
 interface CurrencySearchProps {
   isOpen: boolean
   onDismiss: () => void
-  selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
-  otherSelectedCurrency?: Currency | null
+  selectedCurrency?: Currency | any
+  onCurrencySelect: (currency: Currency | any) => void
+  otherSelectedCurrency?: Currency | any
   showCommonBases?: boolean
   showCurrencyAmount?: boolean
   disableNonToken?: boolean
   showManageView: () => void
   showImportView: () => void
   setImportToken: (token: Token) => void
+  isCrossChain?: boolean
 }
 
 export function CurrencySearch({
@@ -67,6 +69,7 @@ export function CurrencySearch({
   showManageView,
   showImportView,
   setImportToken,
+  isCrossChain,
 }: CurrencySearchProps) {
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
@@ -121,7 +124,8 @@ export function CurrencySearch({
   }, [debouncedQuery, ether, filteredSortedTokens])
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
+    (currency: Currency | any) => {
+      console.log(currency)
       onCurrencySelect(currency)
       onDismiss()
     },
@@ -172,75 +176,146 @@ export function CurrencySearch({
   )
 
   return (
-    <ContentWrapper>
-      <PaddedColumn gap="16px">
-        <RowBetween>
-          <Text fontWeight={500} fontSize={16}>
-            <Trans>Select a token</Trans>
-          </Text>
-          <CloseIcon onClick={onDismiss} />
-        </RowBetween>
-        <Row>
-          <SearchInput
-            type="text"
-            id="token-search-input"
-            placeholder={t`Search name or paste address`}
-            autoComplete="off"
-            value={searchQuery}
-            ref={inputRef as RefObject<HTMLInputElement>}
-            onChange={handleInput}
-            onKeyDown={handleEnter}
-          />
-        </Row>
-        {showCommonBases && (
-          <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
-        )}
-      </PaddedColumn>
-      <Separator />
-      {searchToken && !searchTokenIsAdded ? (
-        <Column style={{ padding: '20px 0', height: '100%' }}>
-          <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
-        </Column>
-      ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
-        <div style={{ flex: '1' }}>
-          <AutoSizer disableWidth>
-            {({ height }) => (
-              <CurrencyList
-                height={height}
-                currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
-                otherListTokens={filteredInactiveTokens}
-                onCurrencySelect={handleCurrencySelect}
-                otherCurrency={otherSelectedCurrency}
-                selectedCurrency={selectedCurrency}
-                fixedListRef={fixedList}
-                showImportView={showImportView}
-                setImportToken={setImportToken}
-                showCurrencyAmount={showCurrencyAmount}
+    <>
+      {isCrossChain ? (
+        <ContentWrapper>
+          <PaddedColumn gap="16px">
+            <RowBetween>
+              <Text fontWeight={500} fontSize={16}>
+                <Trans>Select a Chain</Trans>
+              </Text>
+              <CloseIcon onClick={onDismiss} />
+            </RowBetween>
+            {/* <Row>
+              <SearchInput
+                type="text"
+                id="token-search-input"
+                placeholder={t`Search name or paste address`}
+                autoComplete="off"
+                value={searchQuery}
+                ref={inputRef as RefObject<HTMLInputElement>}
+                onChange={handleInput}
+                onKeyDown={handleEnter}
               />
-            )}
-          </AutoSizer>
-        </div>
-      ) : (
-        <Column style={{ padding: '20px', height: '100%' }}>
-          <TYPE.main color={theme.text3} textAlign="center" mb="20px">
-            <Trans>No results found.</Trans>
-          </TYPE.main>
-        </Column>
-      )}
-      <Footer>
-        <Row justify="center">
-          <ButtonText onClick={showManageView} color={theme.primary1} className="list-token-manage-button">
-            <RowFixed>
-              <IconWrapper size="16px" marginRight="6px" stroke={theme.primaryText1}>
-                <Edit />
-              </IconWrapper>
-              <TYPE.main color={theme.primaryText1}>
-                <Trans>Manage Token Lists</Trans>
+            </Row>
+            {showCommonBases && (
+              <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
+            )} */}
+          </PaddedColumn>
+          <Separator />
+          {filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
+            <div style={{ flex: '1' }}>
+              <AutoSizer disableWidth>
+                {({ height }) => (
+                  <CurrencyList
+                    height={height}
+                    currencies={SupportedCrossChains.chains}
+                    otherListTokens={filteredInactiveTokens}
+                    onCurrencySelect={handleCurrencySelect}
+                    otherCurrency={otherSelectedCurrency}
+                    selectedCurrency={selectedCurrency}
+                    fixedListRef={fixedList}
+                    showImportView={showImportView}
+                    setImportToken={setImportToken}
+                    showCurrencyAmount={showCurrencyAmount}
+                  />
+                )}
+              </AutoSizer>
+            </div>
+          ) : (
+            <Column style={{ padding: '20px', height: '100%' }}>
+              <TYPE.main color={theme.text3} textAlign="center" mb="20px">
+                <Trans>No results found.</Trans>
               </TYPE.main>
-            </RowFixed>
-          </ButtonText>
-        </Row>
-      </Footer>
-    </ContentWrapper>
+            </Column>
+          )}
+          {/* <Footer>
+            <Row justify="center">
+              <ButtonText onClick={showManageView} color={theme.primary1} className="list-token-manage-button">
+                <RowFixed>
+                  <IconWrapper size="16px" marginRight="6px" stroke={theme.primaryText1}>
+                    <Edit />
+                  </IconWrapper>
+                  <TYPE.main color={theme.primaryText1}>
+                    <Trans>Manage Token Lists</Trans>
+                  </TYPE.main>
+                </RowFixed>
+              </ButtonText>
+            </Row>
+          </Footer> */}
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper>
+          <PaddedColumn gap="16px">
+            <RowBetween>
+              <Text fontWeight={500} fontSize={16}>
+                <Trans>Select a token</Trans>
+              </Text>
+              <CloseIcon onClick={onDismiss} />
+            </RowBetween>
+            <Row>
+              <SearchInput
+                type="text"
+                id="token-search-input"
+                placeholder={t`Search name or paste address`}
+                autoComplete="off"
+                value={searchQuery}
+                ref={inputRef as RefObject<HTMLInputElement>}
+                onChange={handleInput}
+                onKeyDown={handleEnter}
+              />
+            </Row>
+            {showCommonBases && (
+              <CommonBases chainId={chainId} onSelect={handleCurrencySelect} selectedCurrency={selectedCurrency} />
+            )}
+          </PaddedColumn>
+          <Separator />
+          {searchToken && !searchTokenIsAdded ? (
+            <Column style={{ padding: '20px 0', height: '100%' }}>
+              <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
+            </Column>
+          ) : filteredSortedTokens?.length > 0 || filteredInactiveTokens?.length > 0 ? (
+            <div style={{ flex: '1' }}>
+              <AutoSizer disableWidth>
+                {({ height }) => (
+                  <CurrencyList
+                    height={height}
+                    currencies={disableNonToken ? filteredSortedTokens : filteredSortedTokensWithETH}
+                    otherListTokens={filteredInactiveTokens}
+                    onCurrencySelect={handleCurrencySelect}
+                    otherCurrency={otherSelectedCurrency}
+                    selectedCurrency={selectedCurrency}
+                    fixedListRef={fixedList}
+                    showImportView={showImportView}
+                    setImportToken={setImportToken}
+                    showCurrencyAmount={showCurrencyAmount}
+                  />
+                )}
+              </AutoSizer>
+            </div>
+          ) : (
+            <Column style={{ padding: '20px', height: '100%' }}>
+              <TYPE.main color={theme.text3} textAlign="center" mb="20px">
+                <Trans>No results found.</Trans>
+              </TYPE.main>
+            </Column>
+          )}
+          <Footer>
+            <Row justify="center">
+              <ButtonText onClick={showManageView} color={theme.primary1} className="list-token-manage-button">
+                <RowFixed>
+                  <IconWrapper size="16px" marginRight="6px" stroke={theme.primaryText1}>
+                    <Edit />
+                  </IconWrapper>
+                  <TYPE.main color={theme.primaryText1}>
+                    <Trans>Manage Token Lists</Trans>
+                  </TYPE.main>
+                </RowFixed>
+              </ButtonText>
+            </Row>
+          </Footer>
+        </ContentWrapper>
+      )}
+    </>
   )
 }

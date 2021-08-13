@@ -1,7 +1,7 @@
 import { parseBytes32String } from '@ethersproject/strings'
 import { Currency, Token } from '@uniswap/sdk-core'
 import { arrayify } from 'ethers/lib/utils'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { createTokenFilterFunction } from '../components/SearchModal/filtering'
 import { ExtendedEther, WETH9_EXTENDED } from '../constants/tokens'
 import { useAllLists, useCombinedActiveList, useInactiveListUrls } from '../state/lists/hooks'
@@ -13,6 +13,7 @@ import { TokenAddressMap, useUnsupportedTokenList } from './../state/lists/hooks
 
 import { useActiveWeb3React } from './web3'
 import { useBytes32TokenContract, useTokenContract } from './useContract'
+import { SupportedCrossChains } from 'constants/chains'
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -175,12 +176,18 @@ export function useToken(tokenAddress?: string): Token | undefined | null {
   ])
 }
 
-export function useCurrency(currencyId: string | undefined): Currency | null | undefined {
+export function useCurrency(currencyId: string | undefined): Currency | null | undefined | any {
   const { chainId } = useActiveWeb3React()
-  const isETH = currencyId?.toUpperCase() === 'ETH'
+  const currency = useMemo(() => {
+    return SupportedCrossChains.chains.filter((value) => {
+      if (value.nativeTokenSymbol == currencyId) return value
+      return
+    })
+  }, [currencyId])
+  const isETH = undefined
   const token = useToken(isETH ? undefined : currencyId)
   const extendedEther = useMemo(() => (chainId ? ExtendedEther.onChain(chainId) : undefined), [chainId])
   const weth = chainId ? WETH9_EXTENDED[chainId] : undefined
   if (weth?.address?.toLowerCase() === currencyId?.toLowerCase()) return weth
-  return isETH ? extendedEther : token
+  return isETH ? extendedEther : token ? token : currency[0]
 }

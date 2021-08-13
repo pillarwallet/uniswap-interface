@@ -13,12 +13,13 @@ import { ImportList } from './ImportList'
 interface CurrencySearchModalProps {
   isOpen: boolean
   onDismiss: () => void
-  selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
-  otherSelectedCurrency?: Currency | null
+  selectedCurrency?: Currency | any
+  onCurrencySelect: (currency: Currency | any) => void
+  otherSelectedCurrency?: Currency | any
   showCommonBases?: boolean
   showCurrencyAmount?: boolean
   disableNonToken?: boolean
+  isCrossChain?: boolean
 }
 
 export enum CurrencyModalView {
@@ -37,6 +38,7 @@ export default function CurrencySearchModal({
   showCommonBases = false,
   showCurrencyAmount = true,
   disableNonToken = false,
+  isCrossChain,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage)
   const lastOpen = useLast(isOpen)
@@ -83,6 +85,7 @@ export default function CurrencySearchModal({
           showImportView={() => setModalView(CurrencyModalView.importToken)}
           setImportToken={setImportToken}
           showManageView={() => setModalView(CurrencyModalView.manage)}
+          isCrossChain={isCrossChain ? isCrossChain : false}
         />
       ) : modalView === CurrencyModalView.importToken && importToken ? (
         <ImportToken

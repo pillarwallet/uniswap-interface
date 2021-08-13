@@ -105,13 +105,15 @@ function CurrencyRow({
   otherSelected,
   style,
   showCurrencyAmount,
+  isCrossChain,
 }: {
-  currency: Currency
+  currency: Currency | any
   onSelect: () => void
   isSelected: boolean
   otherSelected: boolean
   style: CSSProperties
   showCurrencyAmount?: boolean
+  isCrossChain?: boolean
 }) {
   const { account } = useActiveWeb3React()
   const key = currencyKey(currency)
@@ -119,37 +121,66 @@ function CurrencyRow({
   const isOnSelectedList = isTokenOnList(selectedTokenList, currency.isToken ? currency : undefined)
   const customAdded = useIsUserAddedToken(currency)
   const balance = useCurrencyBalance(account ?? undefined, currency)
-
-  // only show add or remove buttons if not on selected list
-  return (
-    <MenuItem
-      style={style}
-      className={`token-item-${key}`}
-      onClick={() => (isSelected ? null : onSelect())}
-      disabled={isSelected}
-      selected={otherSelected}
-    >
-      <CurrencyLogo currency={currency} size={'24px'} />
-      <Column>
-        <Text title={currency.name} fontWeight={500}>
-          {currency.symbol}
-        </Text>
-        <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
-          {!currency.isNative && !isOnSelectedList && customAdded ? (
-            <Trans>{currency.name} • Added by user</Trans>
-          ) : (
-            currency.name
-          )}
-        </TYPE.darkGray>
-      </Column>
-      <TokenTags currency={currency} />
-      {showCurrencyAmount && (
-        <RowFixed style={{ justifySelf: 'flex-end' }}>
-          {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
-        </RowFixed>
-      )}
-    </MenuItem>
-  )
+  if (!isCrossChain) {
+    // only show add or remove buttons if not on selected list
+    return (
+      <MenuItem
+        style={style}
+        className={`token-item-${key}`}
+        onClick={() => (isSelected ? null : onSelect())}
+        disabled={isSelected}
+        selected={otherSelected}
+      >
+        <CurrencyLogo currency={currency} size={'24px'} />
+        <Column>
+          <Text title={currency.name} fontWeight={500}>
+            {currency.symbol}
+          </Text>
+          <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+            {!currency.isNative && !isOnSelectedList && customAdded ? (
+              <Trans>{currency.name} • Added by user</Trans>
+            ) : (
+              currency.name
+            )}
+          </TYPE.darkGray>
+        </Column>
+        <TokenTags currency={currency} />
+        {/* {showCurrencyAmount && (
+          <RowFixed style={{ justifySelf: 'flex-end' }}>
+            {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
+          </RowFixed>
+        )} */}
+      </MenuItem>
+    )
+  } else {
+    // const key = currencyKey(currency)
+    console.log(currency)
+    return (
+      <MenuItem
+        style={style}
+        className={`currency-item-${currency.chainId}`}
+        onClick={() => (isSelected ? null : onSelect())}
+        disabled={isSelected}
+        selected={otherSelected}
+      >
+        <CurrencyLogo currency={currency} size={'24px'} />
+        <Column>
+          <Text title={currency.name} fontWeight={500}>
+            {currency.symbol}
+          </Text>
+          <TYPE.darkGray ml="0px" fontSize={'12px'} fontWeight={300}>
+            {!currency.isNative ? <Trans>{currency.name} • Added by user</Trans> : currency.name}
+          </TYPE.darkGray>
+        </Column>
+        {/* <TokenTags currency={currency} /> */}
+        {/* {showCurrencyAmount && (
+          <RowFixed style={{ justifySelf: 'flex-end' }}>
+            {balance ? <Balance balance={balance} /> : account ? <Loader /> : null}
+          </RowFixed>
+        )} */}
+      </MenuItem>
+    )
+  }
 }
 
 const BREAK_LINE = 'BREAK'
@@ -194,17 +225,19 @@ export default function CurrencyList({
   showImportView,
   setImportToken,
   showCurrencyAmount,
+  crosschain,
 }: {
   height: number
-  currencies: Currency[]
+  currencies: Currency[] | any
   otherListTokens?: WrappedTokenInfo[]
-  selectedCurrency?: Currency | null
-  onCurrencySelect: (currency: Currency) => void
-  otherCurrency?: Currency | null
+  selectedCurrency?: Currency | any
+  onCurrencySelect: (currency: Currency | any) => void
+  otherCurrency?: Currency | null | any
   fixedListRef?: MutableRefObject<FixedSizeList | undefined>
   showImportView: () => void
   setImportToken: (token: Token) => void
   showCurrencyAmount?: boolean
+  crosschain?: boolean
 }) {
   const itemData: (Currency | BreakLine)[] = useMemo(() => {
     if (otherListTokens && otherListTokens?.length > 0) {
@@ -222,16 +255,15 @@ export default function CurrencyList({
       }
 
       const currency = row
-
-      const isSelected = Boolean(currency && selectedCurrency && selectedCurrency.equals(currency))
-      const otherSelected = Boolean(currency && otherCurrency && otherCurrency.equals(currency))
+      const isSelected = Boolean(currency && selectedCurrency && selectedCurrency.chainId === currency.chainId)
+      const otherSelected = Boolean(currency && otherCurrency && otherCurrency.chainId === currency.chainId)
       const handleSelect = () => currency && onCurrencySelect(currency)
 
       const token = currency?.wrapped
 
       const showImport = index > currencies.length
 
-      if (showImport && token) {
+      if (showImport && token && !crosschain) {
         return (
           <ImportRow style={style} token={token} showImportView={showImportView} setImportToken={setImportToken} dim />
         )
@@ -244,6 +276,7 @@ export default function CurrencyList({
             onSelect={handleSelect}
             otherSelected={otherSelected}
             showCurrencyAmount={showCurrencyAmount}
+            isCrossChain={crosschain}
           />
         )
       } else {
@@ -258,6 +291,7 @@ export default function CurrencyList({
       setImportToken,
       showImportView,
       showCurrencyAmount,
+      crosschain,
     ]
   )
 

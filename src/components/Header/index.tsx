@@ -13,7 +13,7 @@ import { useETHBalances } from 'state/wallet/hooks'
 import styled from 'styled-components/macro'
 import Logo from '../../assets/svg/Full Green+Black.svg'
 import LogoDark from '../../assets/svg/Full White.svg'
-import { useActiveWeb3React } from '../../hooks/web3'
+import { useActiveWeb3React, getSdk } from '../../hooks/web3'
 import { ExternalLink, TYPE } from '../../theme'
 import ClaimModal from '../claim/ClaimModal'
 import { CardNoise } from '../earn/styled'
@@ -24,6 +24,7 @@ import { Dots } from '../swap/styleds'
 import Web3Status from '../Web3Status'
 import NetworkCard from './NetworkCard'
 import UniBalanceContent from './UniBalanceContent'
+import { ethers } from 'ethers'
 
 const HeaderFrame = styled.div<{ showBackground: boolean }>`
   display: grid;
@@ -240,9 +241,22 @@ const StyledExternalLink = styled(ExternalLink).attrs({
 `
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
+  const sdk = getSdk()
+  const [balance, setBalance] = useState('')
 
-  const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  sdk?.getAccountBalances().then((value) => {
+    setBalance(Number(ethers.utils.formatEther(value.items[0].balance)).toPrecision(4))
+  })
+
+  // console.log(sdk?.state.accountAddress)
+  const account = sdk?.state.accountAddress
+
+  // const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  // const userEthBalance = sdk ? await sdk.getAccountBalances())[0].balance : ''
+  // const userEthBalance = getBalance() || ''
+  // console.log(userEthBalance)
+
   const [darkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
@@ -285,11 +299,14 @@ export default function Header() {
         >
           <Trans>Pool</Trans>
         </StyledNavLink>
-        {chainId && chainId === SupportedChainId.MAINNET && (
+        <StyledNavLink id={`stake-nav-link`} to={'/bridge'}>
+          <Trans>Bridge</Trans>
+        </StyledNavLink>
+        {/* {chainId && chainId === SupportedChainId.MAINNET && (
           <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
             <Trans>Vote</Trans>
           </StyledNavLink>
-        )}
+        )} */}
         {/* <StyledExternalLink id={`stake-nav-link`} href={infoLink}>
           <Trans>Charts</Trans>
           <sup>↗</sup>
@@ -316,9 +333,10 @@ export default function Header() {
             </UNIWrapper>
           )}
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && userEthBalance ? (
+            {account && balance ? (
               <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                <Trans>{userEthBalance?.toSignificant(3)} ETH</Trans>
+                {/* <Trans>{userEthBalance?.toSignificant(3)} ETH</Trans> */}
+                <Trans>{balance} ETH</Trans>
               </BalanceText>
             ) : null}
             <Web3Status />

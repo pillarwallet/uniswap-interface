@@ -40,7 +40,7 @@ import { useSwapCallback } from '../../hooks/useSwapCallback'
 import useToggledVersion, { Version } from '../../hooks/useToggledVersion'
 import { useUSDCValue } from '../../hooks/useUSDCPrice'
 import useWrapCallback, { WrapType } from '../../hooks/useWrapCallback'
-import { useActiveWeb3React, getwalletProvider } from '../../hooks/web3'
+import { useActiveWeb3React, GetwalletProvider, getSdk } from '../../hooks/web3'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import {
@@ -70,8 +70,10 @@ const StyledInfo = styled(Info)`
 
 export default function Swap({ history }: RouteComponentProps) {
   const { account } = useActiveWeb3React()
-  const walletProvider = getwalletProvider()
+  const walletProvider = GetwalletProvider()
   console.log(walletProvider)
+  const sdk = getSdk()
+  console.log(sdk)
   const loadedUrlParams = useDefaultsFromURLSearch()
 
   // token warning stuff

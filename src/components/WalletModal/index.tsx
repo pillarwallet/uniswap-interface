@@ -17,6 +17,7 @@ import { useModalOpen, useWalletModalToggle } from '../../state/application/hook
 import { ExternalLink, TYPE } from '../../theme'
 import AccountDetails from '../AccountDetails'
 import { Trans } from '@lingui/macro'
+import { Activate1, getSdk } from 'hooks/web3'
 
 import Modal from '../Modal'
 import Option from './Option'
@@ -121,8 +122,19 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
   ENSName?: string
 }) {
+  console.log(WALLET_VIEWS)
   // important that these are destructed from the account-specific web3-react context
-  const { active, account, connector, activate, error } = useWeb3React()
+  const { active, connector, activate, error } = useWeb3React()
+
+  const sdk = getSdk()
+
+  if (!sdk && active) {
+    const isMetamask = window.ethereum && window.ethereum.isMetaMask
+    Activate1(isMetamask ? 'MetaMask' : ' WalletConnect')
+    // sdk = getSdk()
+  }
+
+  const account = sdk?.state.accountAddress
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
@@ -159,7 +171,9 @@ export default function WalletModal({
     }
   }, [setWalletView, active, error, connector, walletModalOpen, activePrevious, connectorPrevious])
 
-  const tryActivation = async (connector: AbstractConnector | undefined) => {
+  const tryActivation = async (option: any) => {
+    console.log(option.name)
+    const connector = option.connector
     let name = ''
     Object.keys(SUPPORTED_WALLETS).map((key) => {
       if (connector === SUPPORTED_WALLETS[key].connector) {
@@ -175,20 +189,27 @@ export default function WalletModal({
     })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
+    console.log(Activate1(option.name))
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
-    if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
-      connector.walletConnectProvider = undefined
-    }
+    // if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+    //   connector.walletConnectProvider = undefined
+    // }
 
-    connector &&
-      activate(connector, undefined, true).catch((error) => {
-        if (error instanceof UnsupportedChainIdError) {
-          activate(connector) // a little janky...can't use setError because the connector isn't set
-        } else {
-          setPendingError(true)
-        }
-      })
+    // connector &&
+    //   activate(connector, undefined, true)
+    //     .then(() => {
+    //       console.log('here')
+    //       console.log(Activate1(option.name))
+    //     })
+    //     .catch((error) => {
+    //       if (error instanceof UnsupportedChainIdError) {
+    //         activate(connector) // a little janky...can't use setError because the connector isn't set
+    //       } else {
+    //         setPendingError(true)
+    //       }
+    //     })
+    // console.log(Activate1())
   }
 
   // close wallet modal if fortmatic modal is active
@@ -214,7 +235,7 @@ export default function WalletModal({
           return (
             <Option
               onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
+                option.connector !== connector && !option.href && tryActivation(option)
               }}
               id={`connect-${key}`}
               key={key}
@@ -269,7 +290,7 @@ export default function WalletModal({
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
-                : !option.href && tryActivation(option.connector)
+                : !option.href && tryActivation(option)
             }}
             key={key}
             active={option.connector === connector}
