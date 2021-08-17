@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components/macro'
 import { SUPPORTED_WALLETS } from '../../constants/wallet'
-import { getSdk, useActiveWeb3React } from '../../hooks/web3'
+import { getSdk, useActiveWeb3React, destorySdk } from '../../hooks/web3'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { shortenAddress } from '../../utils'
 import { ExplorerDataType, getExplorerLink } from '../../utils/getExplorerLink'
@@ -313,6 +313,7 @@ export default function AccountDetails({
                     <WalletAction
                       style={{ fontSize: '.825rem', fontWeight: 400, marginRight: '8px' }}
                       onClick={() => {
+                        destorySdk()
                         ;(connector as any).close()
                       }}
                     >

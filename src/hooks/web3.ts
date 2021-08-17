@@ -40,10 +40,23 @@ export async function Activate1(option: string) {
         return null
       })
   } else {
+    console.log(walletconnect.walletConnectProvider.connector.chainId)
     walletProvider = WalletConnectWalletProvider.connect(walletconnect.walletConnectProvider.connector)
-    sdk = new Sdk(walletProvider)
-    await sdk.computeContractAccount()
-    // console.log(sdk.state.accountAddress)
+    console.log('walletProvider', walletProvider)
+    // console.log(chainId)
+    // walletProvider = WalletConnectWalletProvider.connect(option.connector)
+    sdk = new Sdk(walletProvider, {
+      networkName:
+        walletconnect.walletConnectProvider.connector.chainId == 1
+          ? ('ropsten' as NetworkNames)
+          : walletconnect.walletConnectProvider.connector.chainId == 3
+          ? ('ropsten' as NetworkNames)
+          : ('sokol' as NetworkNames),
+      omitWalletProviderNetworkCheck: true,
+    })
+    console.log(sdk.state.accountAddress)
+    console.log(await sdk.computeContractAccount())
+    console.log(sdk.state.accountAddress)
     return walletProvider
   }
   return walletProvider

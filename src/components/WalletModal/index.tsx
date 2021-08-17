@@ -189,26 +189,26 @@ export default function WalletModal({
     })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
-    console.log(Activate1(option.name))
+    // console.log(Activate1(option))
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     // if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
     //   connector.walletConnectProvider = undefined
     // }
 
-    // connector &&
-    //   activate(connector, undefined, true)
-    //     .then(() => {
-    //       console.log('here')
-    //       console.log(Activate1(option.name))
-    //     })
-    //     .catch((error) => {
-    //       if (error instanceof UnsupportedChainIdError) {
-    //         activate(connector) // a little janky...can't use setError because the connector isn't set
-    //       } else {
-    //         setPendingError(true)
-    //       }
-    //     })
+    connector &&
+      activate(connector, undefined, true)
+        .then(() => {
+          console.log('here')
+          console.log(Activate1(option.name))
+        })
+        .catch((error) => {
+          if (error instanceof UnsupportedChainIdError) {
+            activate(connector) // a little janky...can't use setError because the connector isn't set
+          } else {
+            setPendingError(true)
+          }
+        })
     // console.log(Activate1())
   }
 
